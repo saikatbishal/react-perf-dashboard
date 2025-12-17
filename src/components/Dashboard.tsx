@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useFps } from '../hooks/useFps';
 import { useMemory } from '../hooks/useMemory';
 import { useNetworkMonitor } from '../hooks/useNetworkMonitor';
+import { useWebVitals } from '../hooks/useWebVitals';
 
 const styles = {
   // We remove 'bottom' and 'right' here because we will set 'top' and 'left' dynamically
@@ -66,13 +67,57 @@ const styles = {
     backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: '4px',
   },
+  vitalRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: '2px',
+    fontSize: '11px',
+  },
 };
 
 export const Dashboard = () => {
   const fps = useFps();
   const memory = useMemory();
   const requests = useNetworkMonitor();
+  const vitals = useWebVitals();
   const [minimized, setMinimized] = useState(false);
+
+  /**
+   * Helper function to determine color based on Web Vitals thresholds
+   */
+  const getVitalColor = (metric: keyof typeof vitals, value: number | null): string => {
+    if (value === null) return '#888';
+    
+    switch (metric) {
+      case 'lcp':
+        return value < 2500 ? '#00ff41' : value < 4000 ? '#ffa500' : '#ff0000';
+      case 'fcp':
+        return value < 1800 ? '#00ff41' : value < 3000 ? '#ffa500' : '#ff0000';
+      case 'cls':
+        return value < 0.1 ? '#00ff41' : value < 0.25 ? '#ffa500' : '#ff0000';
+      case 'inp':
+        return value < 200 ? '#00ff41' : value < 500 ? '#ffa500' : '#ff0000';
+      case 'ttfb':
+        return value < 800 ? '#00ff41' : value < 1800 ? '#ffa500' : '#ff0000';
+      default:
+        return '#888';
+    }
+  };
+
+  /**
+   * Format Web Vitals value for display
+   */
+  const formatVital = (value: number | null, metric: keyof typeof vitals): string => {
+    if (value === null) return 'N/A';
+    
+    // CLS is a score, not milliseconds
+    if (metric === 'cls') {
+      return value.toFixed(3);
+    }
+    
+    // All other metrics are in milliseconds
+    return `${Math.round(value)}ms`;
+  };
 
   // 1. State for Position (defaults to top-left 20px)
   const [position, setPosition] = useState({ x: 20, y: 20 });
@@ -179,6 +224,51 @@ export const Dashboard = () => {
           </div>
         </div>
       )}
+
+      {/* WEB VITALS SECTION */}
+      <div style={{borderTop: '1px solid #333', paddingTop: '8px', marginTop: '8px', marginBottom: '10px'}}>
+        <div style={{marginBottom: '6px', color: '#888', fontWeight: 'bold'}}>WEB VITALS</div>
+        
+        {/* LCP - Largest Contentful Paint */}
+        <div style={styles.vitalRow}>
+          <span>LCP:</span>
+          <span style={{color: getVitalColor('lcp', vitals.lcp)}}>
+            {formatVital(vitals.lcp, 'lcp')}
+          </span>
+        </div>
+
+        {/* FCP - First Contentful Paint */}
+        <div style={styles.vitalRow}>
+          <span>FCP:</span>
+          <span style={{color: getVitalColor('fcp', vitals.fcp)}}>
+            {formatVital(vitals.fcp, 'fcp')}
+          </span>
+        </div>
+
+        {/* CLS - Cumulative Layout Shift */}
+        <div style={styles.vitalRow}>
+          <span>CLS:</span>
+          <span style={{color: getVitalColor('cls', vitals.cls)}}>
+            {formatVital(vitals.cls, 'cls')}
+          </span>
+        </div>
+
+        {/* INP - Interaction to Next Paint */}
+        <div style={styles.vitalRow}>
+          <span>INP:</span>
+          <span style={{color: getVitalColor('inp', vitals.inp)}}>
+            {formatVital(vitals.inp, 'inp')}
+          </span>
+        </div>
+
+        {/* TTFB - Time to First Byte */}
+        <div style={styles.vitalRow}>
+          <span>TTFB:</span>
+          <span style={{color: getVitalColor('ttfb', vitals.ttfb)}}>
+            {formatVital(vitals.ttfb, 'ttfb')}
+          </span>
+        </div>
+      </div>
 
       {/* NETWORK SECTION */}
       <div style={{borderTop: '1px solid #333', paddingTop: '8px', marginTop: '8px'}}>
