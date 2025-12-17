@@ -1,11 +1,16 @@
 {
-  "name": "@saikatbishal/react-perf-dashboard",
+  "name": "@saikat786/react-perf-dashboard",
   "private": false,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "description": "A lightweight, drop-in performance monitor for React apps.",
-  "author": "Your Name <your@email.com>",
+  "author": "Saikat Bishal <saikat.bishal786@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/saikatbishal/react-perf-dashboard"
+  },
+  "keywords": ["react","performance","dashboard","monitor","fps"],
   "files": [
     "dist"
   ],
