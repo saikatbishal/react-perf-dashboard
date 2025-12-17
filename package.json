@@ -1,7 +1,7 @@
 {
   "name": "@saikatbishal/react-perf-dashboard",
   "private": false,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "description": "A lightweight, drop-in performance monitor for React apps.",
   "author": "Your Name <your@email.com>",
