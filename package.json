@@ -10,6 +10,9 @@
     "dist"
   ],
   "main": "./dist/react-perf-dashboard.umd.cjs",
+  "publishConfig": {
+    "access": "public"
+  },
   "module": "./dist/react-perf-dashboard.js",
   "types": "./dist/index.d.ts",
   "exports": {
